@@ -12,55 +12,94 @@
       background-color: #121212;
       color: #fff;
     }
+
     header {
       background-color: #1f1f1f;
       padding: 20px;
+      text-align: center;
+      position: relative;
     }
-    nav {
-      background-color: #333;
-      padding: 10px;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-    nav a {
+
+    /* Three dots icon */
+    .menu-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
       color: #fff;
+    }
+
+    .drawer {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      right: 0;
+      background-color: #000;
+      overflow-x: hidden;
+      transition: 0.4s;
+      padding-top: 60px;
+    }
+
+    .drawer a {
+      padding: 12px 24px;
       text-decoration: none;
-      padding: 8px 12px;
-      background-color: #444;
-      border-radius: 4px;
+      color: white;
+      display: block;
+      transition: 0.3s;
     }
-    nav a:hover {
-      background-color: #555;
+
+    .drawer a:hover {
+      background-color: #333;
     }
+
+    .drawer .closebtn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 30px;
+    }
+
     .course {
       background-color: #1e1e1e;
       margin: 20px auto;
       padding: 15px;
       width: 80%;
       border-radius: 8px;
+      text-align: center;
     }
+
     footer {
       background-color: #1f1f1f;
       padding: 15px;
       text-align: center;
     }
+
+    .drawer h3 {
+      text-align: center;
+      padding: 10px;
+      color: #0f0;
+    }
   </style>
 </head>
 <body>
+
   <header>
     <h1>My Simple Edu Website</h1>
+    <span class="menu-btn" onclick="openDrawer()">&#8942;</span>
   </header>
 
-  <nav>
+  <div class="drawer" id="myDrawer">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeDrawer()">&times;</a>
+    <h3>Thanks for coming here 🙏</h3>
     <a href="#">Home</a>
-    <a href="#">Share this page</a>
-    <a href="#">Rate this page</a>
-    <a href="#">Exit this site</a>
-    <a href="#">About this site</a>
-    <a href="#">Privacy policy</a>
-  </nav>
+    <a href="#" onclick="sharePage()">Share this page</a>
+    <a href="#" onclick="ratePage()">Rate this page</a>
+    <a href="#" onclick="exitSite()">Exit this site</a>
+    <a href="#" onclick="aboutSite()">About this site</a>
+    <a href="#" onclick="privacyPolicy()">Privacy policy</a>
+  </div>
 
   <div class="course">
     <h2>Mathematics</h2>
@@ -70,5 +109,45 @@
   <footer>
     <p>&copy; 2025 Simple Edu Website</p>
   </footer>
+
+  <script>
+    function openDrawer() {
+      document.getElementById("myDrawer").style.width = "250px";
+    }
+
+    function closeDrawer() {
+      document.getElementById("myDrawer").style.width = "0";
+    }
+
+    function sharePage() {
+      const pageUrl = window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: document.title,
+          text: 'Check out this educational site!',
+          url: pageUrl
+        });
+      } else {
+        alert("Browser doesn't support share. Copy this link:\n" + pageUrl);
+      }
+    }
+
+    function ratePage() {
+      alert("Thanks for your rating! ⭐⭐⭐⭐⭐");
+    }
+
+    function exitSite() {
+      window.location.href = "https://www.google.com";
+    }
+
+    function aboutSite() {
+      alert("This is a simple educational website made by Prathamesh Yadav 🚀");
+    }
+
+    function privacyPolicy() {
+      alert("We respect your privacy. No personal data is collected or shared.");
+    }
+  </script>
+
 </body>
-      </html>
+</html>
