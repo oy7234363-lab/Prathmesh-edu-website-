@@ -3,66 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Simple Edu Website</title>
+  <title>Login + Edu Website</title>
   <style>
     body {
+      background-color: #121212;
+      color: white;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #121212;
-      color: #fff;
+    }
+
+    .login-box {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .login-box input, .login-box button {
+      margin: 10px;
+      padding: 10px;
+      width: 80%;
+      border-radius: 4px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .login-box button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    header, footer {
+      text-align: center;
+      padding: 20px;
     }
 
     header {
       background-color: #1f1f1f;
-      padding: 20px;
-      text-align: center;
-      position: relative;
     }
 
-    /* Three dots icon */
-    .menu-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 28px;
-      cursor: pointer;
-      color: #fff;
-    }
-
-    .drawer {
-      height: 100%;
-      width: 0;
-      position: fixed;
-      top: 0;
-      right: 0;
+    footer {
       background-color: #000;
-      overflow-x: hidden;
-      transition: 0.4s;
-      padding-top: 60px;
-    }
-
-    .drawer a {
-      padding: 12px 24px;
-      text-decoration: none;
-      color: white;
-      display: block;
-      transition: 0.3s;
-    }
-
-    .drawer a:hover {
-      background-color: #333;
-    }
-
-    .drawer .closebtn {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      font-size: 30px;
     }
 
     .course {
-      background-color: #1e1e1e;
+      background-color: #2a2a2a;
       margin: 20px auto;
       padding: 15px;
       width: 80%;
@@ -70,35 +58,71 @@
       text-align: center;
     }
 
-    footer {
-      background-color: #1f1f1f;
-      padding: 15px;
-      text-align: center;
+    .menu-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
     }
 
-    .drawer h3 {
-      text-align: center;
+    .menu {
+      display: none;
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background-color: #333;
+      border-radius: 8px;
       padding: 10px;
-      color: #0f0;
+      text-align: left;
+    }
+
+    .menu a {
+      display: block;
+      color: white;
+      padding: 8px 10px;
+      text-decoration: none;
+    }
+
+    .menu a:hover {
+      background-color: #555;
+    }
+
+    #main-content {
+      display: none;
     }
   </style>
 </head>
 <body>
 
+<!-- LOGIN PAGE -->
+<div class="login-box" id="loginBox">
+  <h2>Login</h2>
+  <input type="text" placeholder="Enter Email / Mobile" id="userInput" />
+  <button onclick="sendOTP()">Send OTP</button>
+  <input type="text" placeholder="Enter 6-digit OTP" id="otpInput" style="display:none;" />
+  <button onclick="verifyOTP()" id="verifyBtn" style="display:none;">Verify</button>
+</div>
+
+<!-- MAIN WEBSITE -->
+<div id="main-content">
   <header>
     <h1>My Simple Edu Website</h1>
-    <span class="menu-btn" onclick="openDrawer()">&#8942;</span>
   </header>
 
-  <div class="drawer" id="myDrawer">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeDrawer()">&times;</a>
-    <h3>Thanks for coming here 🙏</h3>
+  <button class="menu-btn" onclick="toggleMenu()">⋮</button>
+  <div class="menu" id="mainMenu">
     <a href="#">Home</a>
     <a href="#" onclick="sharePage()">Share this page</a>
     <a href="#" onclick="ratePage()">Rate this page</a>
     <a href="#" onclick="exitSite()">Exit this site</a>
-    <a href="#" onclick="aboutSite()">About this site</a>
-    <a href="#" onclick="privacyPolicy()">Privacy policy</a>
+    <a href="#">About this site</a>
+    <a href="#">Privacy policy</a>
   </div>
 
   <div class="course">
@@ -108,46 +132,68 @@
 
   <footer>
     <p>&copy; 2025 Simple Edu Website</p>
+    <p>Thanks for coming here</p>
   </footer>
+</div>
 
-  <script>
-    function openDrawer() {
-      document.getElementById("myDrawer").style.width = "250px";
+<script>
+  function sendOTP() {
+    const userInput = document.getElementById("userInput").value;
+    if (userInput.trim() === "") {
+      alert("Please enter your Email or Mobile number.");
+      return;
     }
+    document.getElementById("otpInput").style.display = "inline-block";
+    document.getElementById("verifyBtn").style.display = "inline-block";
+    alert("A 6-digit OTP has been sent (simulated).");
+  }
 
-    function closeDrawer() {
-      document.getElementById("myDrawer").style.width = "0";
+  function verifyOTP() {
+    const otp = document.getElementById("otpInput").value;
+    if (otp.length === 6) {
+      localStorage.setItem("isLoggedIn", "true");
+      showMainSite();
+    } else {
+      alert("Please enter a valid 6-digit OTP.");
     }
+  }
 
-    function sharePage() {
-      const pageUrl = window.location.href;
-      if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          text: 'Check out this educational site!',
-          url: pageUrl
-        });
-      } else {
-        alert("Browser doesn't support share. Copy this link:\n" + pageUrl);
-      }
-    }
+  function toggleMenu() {
+    const menu = document.getElementById("mainMenu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
 
-    function ratePage() {
-      alert("Thanks for your rating! ⭐⭐⭐⭐⭐");
+  function sharePage() {
+    if (navigator.share) {
+      navigator.share({
+        title: document.title,
+        url: window.location.href
+      });
+    } else {
+      alert("Sharing not supported on this browser.");
     }
+  }
 
-    function exitSite() {
-      window.location.href = "https://www.google.com";
-    }
+  function ratePage() {
+    alert("Thanks for rating our site!");
+  }
 
-    function aboutSite() {
-      alert("This is a simple educational website made by Prathamesh Yadav 🚀");
-    }
+  function exitSite() {
+    window.close();
+  }
 
-    function privacyPolicy() {
-      alert("We respect your privacy. No personal data is collected or shared.");
-    }
-  </script>
+  function showMainSite() {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("main-content").style.display = "block";
+  }
+
+  // On page load
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    showMainSite();
+  } else {
+    document.getElementById("loginBox").style.display = "flex";
+  }
+</script>
 
 </body>
 </html>
