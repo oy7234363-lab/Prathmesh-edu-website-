@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Menu</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    /* Three dots menu button */
+    #menuBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    #menuBtn div {
+      width: 6px;
+      height: 6px;
+      background: #007BFF; /* Blue dots */
+      border-radius: 50%;
+    }
+
+    /* Menu dropdown */
+    #menuDropdown {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: black; /* Black background */
+      border-radius: 8px;
+      display: none;
+      flex-direction: column;
+      z-index: 2000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    #menuDropdown button {
+      padding: 10px 20px;
+      border: none;
+      background: black;
+      color: #007BFF; /* Blue text */
+      cursor: pointer;
+      text-align: left;
+      font-size: 16px;
+      width: 180px;
+    }
+
+    #menuDropdown button:hover {
+      background: #111; /* Slightly lighter black on hover */
+    }
+
+    /* Smooth dropdown animation */
+    #menuDropdown.show {
+      display: flex;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Three dots menu button -->
+  <div id="menuBtn" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <!-- Menu Dropdown -->
+  <div id="menuDropdown">
+    <button onclick="goHome()">Home</button>
+    <button onclick="shareSite()">Share this site</button>
+    <button onclick="exitSite()">Exit this site</button>
+    <button onclick="aboutSite()">About this site</button>
+  </div>
+
+  <script>
+    // Toggle menu visibility
+    function toggleMenu() {
+      const menu = document.getElementById('menuDropdown');
+      menu.classList.toggle('show');
+    }
+
+    // Menu actions
+    function goHome() {
+      window.location.href = 'https://your-homepage-link.com'; // Replace with your home page link
+    }
+
+    function shareSite() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Check this site',
+          text: 'Hey, check out this amazing site!',
+          url: window.location.href
+        }).then(() => console.log('Shared successfully'))
+        .catch(err => console.log('Error sharing', err));
+      } else {
+        alert('Copy this link to share: ' + window.location.href);
+      }
+    }
+
+    function exitSite() {
+      window.open('https://www.google.com', '_blank'); // New tab
+    }
+
+    function aboutSite() {
+      alert('This site provides quick navigation options and info about our web platform.');
+    }
+  </script>
+
+</body>
+</html>
