@@ -1,0 +1,362 @@
+<DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>50 Questions Test - Enhanced</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 10px;
+    background: #f1f6ff;
+    color: #222;
+  }
+  h1 {
+    text-align: center;
+    color: #003366;
+  }
+  #notice {
+    background: #004080;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  #timer {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 5px;
+  }
+  .question-box {
+    background: white;
+    border: 2px solid #004080;
+    margin-bottom: 25px;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  .question-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  .options label {
+    display: block;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border: 2px solid #004080;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #dde9ff;
+    transition: background 0.3s;
+    font-size: 1.1rem;
+  }
+  .options label.correct {
+    background: #c6f6b6;
+    border-color: #2d6a06;
+    font-weight: bold;
+  }
+  .options label.incorrect {
+    background: #fba2a2;
+    border-color: #a10e0e;
+    text-decoration: line-through;
+  }
+  .options label:hover:not(.correct):not(.incorrect) {
+    background: #bbd5ff;
+  }
+  input[type="radio"] {
+    margin-right: 12px;
+    transform: scale(1.3);
+    vertical-align: middle;
+  }
+  #submitBtn, #skipBtn, #prevBtn {
+    background: #004080;
+    color: white;
+    font-size: 1.15rem;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 0 15px 30px 0;
+    transition: background 0.3s;
+    min-width: 130px;
+  }
+  #submitBtn:hover, #skipBtn:hover, #prevBtn:hover {
+    background: #003060;
+  }
+  #buttons {
+    text-align: center;
+  }
+  #result {
+    text-align: center;
+    font-size: 1.35rem;
+    font-weight: bold;
+    color: #004080;
+    padding: 15px;
+    background: #eef7f6;
+    border-radius: 12px;
+    margin-top: 20px;
+  }
+  #detailedResult {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #fff;
+    border: 2px solid #004080;
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+  #detailedResult table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  #detailedResult th, #detailedResult td {
+    padding: 8px 10px;
+    border: 1px solid #004080;
+    text-align: center;
+    font-size: 1rem;
+  }
+  #detailedResult th {
+    background-color: #004080;
+    color: white;
+  }
+  #detailedResult td.correct {
+    background-color: #c6f6b6;
+    font-weight: bold;
+  }
+  #detailedResult td.incorrect {
+    background-color: #fba2a2;
+  }
+  #detailedResult td.skipped {
+    background-color: #f1f1f1;
+  }
+</style>
+</head>
+<body>
+<h1>50 Questions - Time: 8 Minutes</h1>
+<div id="notice">
+  समय सीमा: 8 मिनट | कुल 50 प्रश्न | गलत उत्तर पर -1/4 अंक कटौती
+  <div id="timer">08:00</div>
+</div>
+<form id="quizForm"></form>
+<div id="buttons">
+  <button id="prevBtn" disabled>Previous Question</button>
+  <button id="submitBtn">Submit Answer</button>
+  <button id="skipBtn">Skip Question</button>
+</div>
+<div id="result"></div>
+<div id="detailedResult" style="display:none;"></div>
+
+<script>
+const questions = [
+  { question: "प्राचीन भारत में प्रथम नगर किन स्थानों पर स्थापित हुए थे?", options: ["हड़प्पा और मोहनजोदड़ो", "पाटलिपुत्र और वाराणसी", "मुंबई और दिल्ली", "चंद्रगुप्त नगर और मथुरा"], answer: 0 },
+  { question: "सिन्दु घाटी सभ्यता का प्रमुख उत्पाद क्या था?", options: ["सोना", "तांबा और मिट्टी के बर्तन", "लौह", "चांदी"], answer: 1 },
+  { question: "वैदिक काल में ब्राह्मणों का प्रमुख कर्तव्य क्या था?", options: ["युद्ध करना", "धार्मिक अनुष्ठान करना", "खेल-कूद करना", "व्यापार करना"], answer: 1 },
+  { question: "महाजनपदों के काल में किस धर्म का उदय हुआ था?", options: ["हिंदू धर्म", "बौद्ध धर्म और जैन धर्म", "इस्लाम", "सिख धर्म"], answer: 1 },
+  { question: "अशोक ने किस युद्ध के बाद बौद्ध धर्म अपनाया?", options: ["कालींग युद्ध", "मौरी युद्ध", "हिस्टोरिकल युद्ध", "पाटलिपुत्र युद्ध"], answer: 0 },
+  { question: "हड़प्पा नगर की किस वस्तु ने व्यापार के प्रमाण दिए?", options: ["मोहर", "तांबा", "पत्थर", "सोना"], answer: 0 },
+  { question: "वैदिक समय में शिक्षा का केंद्र क्या था?", options: ["गुरुकुल", "विश्वविद्यालय", "मंदिर", "महल"], answer: 0 },
+  { question: "मौर्य सम्राट चंद्रगुप्त मौर्य ने किसे अपने मंत्री के रूप में नियुक्त किया?", options: ["चाणक्य", "कर्ण", "द्रोण", "व्यास"], answer: 0 },
+  { question: "बौद्ध धर्म के संस्थापक कौन थे?", options: ["महावीर", "गौतम बुद्ध", "शंकराचार्य", "कबीर"], answer: 1 },
+  { question: "शाक्य कुल कौन से धर्म का जन्मस्थान था?", options: ["जैन धर्म", "बौद्ध धर्म", "हिंदू धर्म", "इस्लाम"], answer: 1 },
+  { question: "वैदिक युग में सामाजिक व्यवस्था को क्या कहा जाता था?", options: ["जाति पद्धति", "मत्स्य प्रणाली", "पंचायत", "धर्म"], answer: 0 },
+  { question: "मौर्य राज्य की राजधानी कहाँ थी?", options: ["पाटलिपुत्र", "वाराणसी", "अयोध्या", "मथुरा"], answer: 0 },
+  { question: "प्राचीन भारत में सबसे पुरानी भाषा कौन सी थी?", options: ["संस्कृत", "प्राकृत", "पलि", "तमिल"], answer: 0 },
+  { question: "गुप्त काल को किस नाम से जाना जाता है?", options: ["स्वर्ण युग", "पितामह युग", "शौर्य युग", "धर्म युग"], answer: 0 },
+  { question: "अजंता और एलोरा की गुफाएं किस काल की कला हैं?", options: ["मौर्य काल", "गुप्तकाल", "हर्ष काल", "मध्यकाल"], answer: 1 },
+  { question: "प्राचीन भारत में शिल्पकला का केंद्र कौन सा था?", options: ["मथुरा", "सांची", "पाटलिपुत्र", "काशी"], answer: 1 },
+  { question: "सिंधु घाटी की सभ्यता थी?", options: ["नेolithic", "ब्रॉन्ज", "आइरन", "स्टोन"], answer: 1 },
+  { question: "हड़प्पा शहरों की योजना कैसी थी?", options: ["योजना बद्ध", "अव्यवस्थित", "गैर संगठित", "प्राकृतिक"], answer: 0 },
+  { question: "महाजनपदों का काल कब था?", options: ["600-300 ई.पू.", "1000-600 ई.पू.", "300-0", "0-500"], answer: 0 },
+  { question: "रामायण और महाभारत किस युग के ग्रंथ हैं?", options: ["वैदिक युग", "महाजनपद काल", "मध्यकाल", "आधुनिक काल"], answer: 0 },
+  { question: "राजपूत काल का प्रमुख दुश्मन कौन था?", options: ["मंगोल", "मुगल", "तुर्क", "अंग्रेज़"], answer: 2 },
+  { question: "चित्तौड़गढ़ किला किस राजपूत राजा का था?", options: ["प्रहलाद सिंह", "राणा प्रताप", "भीम सिंह", "महाराणा कुंभा"], answer: 3 },
+  { question: "राणा प्रताप की प्रसिद्ध युद्ध भूमि कौन-सी थी?", options: ["पानीपत", "हल्दीघाटी", "बाबरनामा", "अजमेर"], answer: 1 },
+  { question: "राजपूत युद्धों में प्रमुख हथियार क्या था?", options: ["तोप", "तलवार और धनुष", "भाला", "तलवार और बंदूक"], answer: 1 },
+  { question: "राजपूतों की समाज व्यवस्था में सबसे महत्वपूर्ण वर्ग था?", options: ["महारथी", "राजा", "सम्राट", "सिपाही"], answer: 1 },
+  { question: "दिल्ली सल्तनत की स्थापना किसने की थी?", options: ["कुतुबुद्दीन ऐबक", "ग़ाज़ी मसूद", "मुहम्मद गुलाम", "अला उद्दीन खिला जी"], answer: 0 },
+  { question: "अलक़ा (अलाउद्दीन) खिला जी ने किस युद्ध में विजयी प्राप्त की?", options: ["दिलीप चाल युद्ध", "तमलक युद्ध", "कुश्मान युद्ध", "चमचम रण"], answer: 2 },
+  { question: "सल्तनत काल में किस धर्म का प्रभाव सबसे ज्यादा बढ़ा?", options: ["हिंदू धर्म", "इस्लाम", "बौद्ध धर्म", "जैन धर्म"], answer: 1 },
+  { question: "शाहजहाँ किस सुल्तान के काल में काबिल हुए थे?", options: ["इल्तुतमिश", "शेर शाह सूरी", "मुमताज़ महल", "अकबर"], answer: 3 },
+  { question: "दिल्ली सल्तनत के क्षेत्र में मुख्य भाषा कौन सी थी?", options: ["हिंदी", "उर्दू", "फारसी", "सिंधी"], answer: 2 },
+  { question: "मुगल सम्राट अकबर ने अपनी राजधानी कहाँ स्थापित की?", options: ["अग्रा", "दिल्ली", "फतहपुर सीकरी", "लाहौर"], answer: 2 },
+  { question: "शाहजहाँ ने कौन सा विश्व प्रसिद्ध स्मारक बनवाया?", options: ["कुतुब मीनार", "फतेहपुर सीकरी", "ताज महल", "लाल किला"], answer: 2 },
+  { question: "औरंगजेब के शासनकाल में किस धार्मिक नीति का पालन किया गया?", options: ["धार्मिक सहिष्णुता", "कड़ी इस्लामी नीतियां", "सभी धर्मों का समर्थन", "हिंदू धर्म को बढ़ावा"], answer: 1 },
+  { question: "मुगल काल में सबसे प्रमुख कला व स्थापत्य शैली कौन सी थी?", options: ["राजपूत शैली", "मुगल शैली", "डेल्हवी शैली", "सनातनी शैली"], answer: 1 },
+  { question: "मुगल साम्राज्य का पतन किस कारण से शुरू हुआ?", options: ["भीषण युद्ध", "आंतरिक कलह", "विदेशी आक्रमण", "राजनैतिक दुर्बलता"], answer: 3 },
+  { question: "मराठा साम्राज्य के संस्थापक कौन थे?", options: ["छत्रपति शिवाजी महाराज", "छत्रपति संभाजी", "पेशवा बलेजीत", "रघुनाथ राव"], answer: 0 },
+  { question: "पेशवा बलेजीत ने किस क्षेत्र में विस्तार किया?", options: ["दक्षिण भारत", "पूर्वी भारत", "पश्चिमी भारत", "उत्तर भारत"], answer: 0 },
+  { question: "मराठा साम्राज्य की राजधानी कहाँ थी?", options: ["पुणे", "अहमदनगर", "सिंधु", "नासिक"], answer: 0 },
+  { question: "मराठा युद्ध शैली में किस तरह के हथियारों का उपयोग अधिक था?", options: ["तोपखाना", "तुर्की तलवार", "धनुष-बाण और तलवार", "तलवार और बंदूक"], answer: 2 },
+  { question: "मराठा साम्राज्य किस शासकीय प्रणाली पर आधारित था?", options: ["सामंत राज्य प्रणाली", "दोहारी शासन", "पेशवा शासन", "साम्राज्य प्रणाली"], answer: 0 },
+  { question: "भारत में प्रथम स्वतंत्रता संग्राम कब हुआ था?", options: ["1857", "1947", "1919", "1885"], answer: 0 },
+  { question: "पहले स्वतंत्रता संग्राम के प्रमुख नेता कौन थे?", options: ["तीन डाकू", "मंगल पांडे, रानी लक्ष्मीबाई, तात्या टोपे", "नेहरू", "सुभाष बोस"], answer: 1 },
+  { question: "मंगल पांडे किसने मारा था?", options: ["ब्रिटिश अफसरों", "अंग्रेज सैनिकों", "भारतीय सैनिकों", "फौज के सैनिकों"], answer: 1 },
+  { question: "रानी लक्ष्मीबाई की वीरता कहाँ प्रसिद्ध है?", options: ["झांसी की लड़ाई", "अजमेर की लड़ाई", "पाटलिपुत्र की लड़ाई", "दिल्ली की लड़ाई"], answer: 0 },
+  { question: "भारतीय स्वतंत्रता संग्राम के किस नेता का नाम अंग्रेज़ सरकार ने डाकुओं की सूची में रखा था?", options: ["जीबेन्द्र सिंह", "सुभाष चंद्र बोस", "तात्या टोपे", "बाल गंगाधर तिलक"], answer: 2 },
+  { question: "ब्रिटिश काल में भारत की प्रमुख आर्थिक समस्या क्या थी?", options: ["कृषि संकट", "औद्योगिक क्रांति", "बाल मजदूरी", "सामाजिक असमानता"], answer: 0 },
+  { question: "ब्रिटिशों ने भारतीय किसानों पर किस प्रकार का बोज़ डाला?", options: ["करों का भारी बोझ", "मुफ्त फसल", "उच्च मजदूरी", "सामाजिक सुधार"], answer: 0 },
+  { question: "ब्रिटिश काल की शिक्षा नीति का परिणाम क्या था?", options: ["विद्यार्थियों की वृद्धि", "पशुपालन का विकास", "औद्योगिक विकास", "सामाजिक असमानता"], answer: 0 },
+  { question: "ब्रिटिशों ने भारतीय बाजार में कौन सा प्रभाव डाला?", options: ["विदेशी वस्तुओं का प्रवेश", "निजी उत्पादन वृद्धि", "स्वदेशी का विकास", "कृषि का विस्तार"], answer: 0 },
+  { question: "ब्रिटिश राज के दौरान भारतीय उद्योगों पर क्या प्रभाव पड़ा?", options: ["नाश", "प्रगति", "स्थिरता", "विस्तार"], answer: 0 }
+];
+let currentQuestionIndex = 0;
+let score = 0;
+const userAnswers = new Array(questions.length).fill(null);
+const totalSeconds = 8 * 60;
+let timeLeft = totalSeconds;
+let timerInterval;
+
+const timerDiv = document.getElementById('timer');
+const form = document.getElementById('quizForm');
+const resultDiv = document.getElementById('result');
+const buttonsDiv = document.getElementById('buttons');
+const submitBtn = document.getElementById('submitBtn');
+const skipBtn = document.getElementById('skipBtn');
+const prevBtn = document.getElementById('prevBtn');
+const detailedResultDiv = document.getElementById('detailedResult');
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    timerDiv.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    timeLeft--;
+    if(timeLeft < 0) {
+      clearInterval(timerInterval);
+      finishTest();
+    }
+  }, 1000);
+}
+
+function loadQuestion() {
+  form.innerHTML = '';
+  resultDiv.textContent = '';
+  if(currentQuestionIndex < 0) currentQuestionIndex = 0;
+  if(currentQuestionIndex >= questions.length){
+    finishTest();
+    return;
+  }
+  const q = questions[currentQuestionIndex];
+  const qBox = document.createElement('div');
+  qBox.className = 'question-box';
+  const qText = document.createElement('div');
+  qText.className = 'question-text';
+  qText.textContent = `${currentQuestionIndex + 1}. ${q.question}`;
+  qBox.appendChild(qText);
+  const optsDiv = document.createElement('div');
+  optsDiv.className = 'options';
+
+  q.options.forEach((opt, i) => {
+    const label = document.createElement('label');
+    label.className = "";
+    if(userAnswers[currentQuestionIndex] !== null){
+      if(i === q.answer) label.classList.add('correct');
+      if(i === userAnswers[currentQuestionIndex] && userAnswers[currentQuestionIndex] !== q.answer) label.classList.add('incorrect');
+    }
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'answer';
+    radio.value = i;
+    if(userAnswers[currentQuestionIndex] === i){
+      radio.checked = true;
+    }
+    radio.disabled = userAnswers[currentQuestionIndex] !== null;
+    label.appendChild(radio);
+    label.appendChild(document.createTextNode(opt));
+    optsDiv.appendChild(label);
+  });
+  qBox.appendChild(optsDiv);
+  form.appendChild(qBox);
+  
+  prevBtn.disabled = currentQuestionIndex === 0;
+}
+
+submitBtn.onclick = () => {
+  const selected = form.querySelector('input[name="answer"]:checked');
+  if(!selected){
+    alert("कृपया एक विकल्प चुनें।");
+    return;
+  }
+  const selectedValue = parseInt(selected.value);
+  if(userAnswers[currentQuestionIndex] === null) {
+    userAnswers[currentQuestionIndex] = selectedValue;
+
+    if(selectedValue === questions[currentQuestionIndex].answer){
+      score++;
+    } else {
+      score -= 0.25;
+    }
+    
+    currentQuestionIndex++;
+    loadQuestion();
+  }
+};
+
+skipBtn.onclick = () => {
+  if(userAnswers[currentQuestionIndex] === null){
+    userAnswers[currentQuestionIndex] = "skipped";
+  }
+  currentQuestionIndex++;
+  loadQuestion();
+};
+
+prevBtn.onclick = () => {
+  if(currentQuestionIndex > 0){
+    currentQuestionIndex--;
+    loadQuestion();
+  }
+};
+
+function finishTest() {
+  clearInterval(timerInterval);
+  form.innerHTML = '';
+  buttonsDiv.style.display = 'none';
+  resultDiv.innerHTML = `
+    <div>आपका स्कोर है: <strong>${score.toFixed(2)} / ${questions.length}</strong></div>
+    <br />
+    <h3>विस्तृत परिणाम:</h3>
+    <table>
+      <thead>
+        <tr><th>प्रश्न संख्या</th><th>आपका उत्तर</th><th>सही उत्तर</th><th>स्थिति</th></tr>
+      </thead>
+      <tbody>
+        ${questions.map((q,i) => {
+          let yourAns = userAnswers[i];
+          let yourAnsText = yourAns === "skipped" ? "छोड़ा गया": q.options[yourAns] || "छोड़ा गया";
+          let correctAnsText = q.options[q.answer];
+          let status = "";
+          let cls = "";
+          if(yourAns === q.answer){
+            status = "सही";
+            cls = 'correct';
+          } else if(yourAns === "skipped"){
+            status = "छोड़ा गया";
+            cls = 'skipped';
+          } else {
+            status = "गलत";
+            cls = 'incorrect';
+          }
+          return `<tr>
+                    <td>${i+1}</td>
+                    <td class="${cls}">${yourAnsText}</td>
+                    <td>${correctAnsText}</td>
+                    <td>${status}</td>
+                  </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+window.onload = () => {
+  alert("समय सीमा 8 मिनट, कुल 50 प्रश्न, प्रत्येक गलत प्रश्न पर 1/4 अंक कटौती होगी। ठीक है तो OK दबाएं।");
+  loadQuestion();
+  startTimer();
+};
+</script>
+</body>
+</html>
