@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exam Website</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e90ff, #00c6ff);
+      min-height: 100vh;
+    }
+
+    /* Welcome Screen */
+    #welcome {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      color: white;
+      text-align: center;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+    #welcome h1 { font-size: 2.5rem; margin-bottom: 25px; }
+    #welcome button {
+      padding: 12px 25px;
+      font-size: 1.2rem;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #welcome button:hover {
+      background: #e68900;
+      transform: scale(1.05);
+    }
+
+    /* Main Page */
+    #mainPage { display: none; padding: 20px; color: #333; }
+
+    .menu-icon {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 30px;
+      cursor: pointer;
+      color: white;
+      background: rgba(0,0,0,0.4);
+      padding: 5px 10px;
+      border-radius: 10px;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 55px;
+      right: 20px;
+      background: #222;
+      color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .dropdown a {
+      display: block;
+      padding: 12px 18px;
+      text-decoration: none;
+      color: white;
+      transition: 0.3s;
+    }
+    .dropdown a:hover { background: #00c6ff; }
+
+    #examSection { text-align: center; margin-top: 60px; }
+    #examSection h2 { color: white; margin-bottom: 20px; font-size: 2rem; }
+    #searchBox {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 30px;
+      outline: none;
+      font-size: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    #examList {
+      max-height: 400px;
+      overflow-y: auto;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      width: 85%;
+      margin: auto;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #examList div {
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #f5f9ff;
+      transition: 0.3s;
+    }
+    #examList div:hover {
+      background: #e0f0ff;
+      transform: scale(1.02);
+    }
+
+    #examDetail {
+      display: none;
+      text-align: center;
+      margin-top: 40px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 15px;
+      padding: 20px;
+      width: 85%;
+      margin: 40px auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    #examDetail h3 { color: #007bff; margin-bottom: 20px; }
+
+    .option {
+      display: block;
+      margin: 12px auto;
+      padding: 14px;
+      width: 80%;
+      max-width: 320px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .option:hover {
+      background: linear-gradient(135deg, #0056b3, #0096c7);
+      transform: scale(1.05);
+    }
+
+    button.backBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button.backBtn:hover { background: #e64a19; transform: scale(1.05); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Welcome Slide -->
+  <div id="welcome">
+    <h1>Welcome Back 💙</h1>
+    <button onclick="enterSite()">🚀 Continue</button>
+  </div>
+
+  <!-- Main Page -->
+  <div id="mainPage">
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <div class="dropdown" id="menuDropdown">
+      <a href="#">🏠 Home</a>
+      <a href="#" onclick="shareSite()">🔗 Share this site</a>
+      <a href="#" onclick="exitSite()">❌ Exit</a>
+      <a href="#" onclick="aboutSite()">ℹ About</a>
+    </div>
+
+    <div id="examSection">
+      <h2>✨ Choose Your Exam ✨</h2>
+      <input type="text" id="searchBox" placeholder="🔍 Search exam..." />
+      <div id="examList"></div>
+    </div>
+
+    <div id="examDetail">
+      <h3 id="selectedExam"></h3>
+      <div id="detailContent"></div>
+      <br />
+      <button class="backBtn" onclick="backToExams()">⬅ Back</button>
+    </div>
+  </div>
+
+  <script>
+    const exams = [
+      "UP Polytechnic First Year Exam Group A",
+      "UP SI","NTPC","SSC CGL","SSC CHSL","UPTET","CTET","UPSC Prelims",
+      "UPSC Mains","Railway Group D","Railway JE","IBPS PO","IBPS Clerk",
+      "SBI PO","SBI Clerk","RRB ALP","NDA","CDS","AFCAT","Indian Airforce Group X",
+      "Indian Airforce Group Y","Indian Navy SSR","Indian Navy AA","Delhi Police Constable",
+      "UP Police Constable","Bihar Police SI","SSC MTS","SSC GD Constable","LIC Assistant",
+      "LIC AAO","DRDO Technician","ISRO Assistant","GATE","IIT JEE Mains","IIT JEE Advanced",
+      "NEET UG","AIIMS Nursing","CLAT","NIFT Entrance","NDA 2","ICAR Exam","CUET",
+      "IGNOU B.Ed","Navodaya Exam","KVS PRT","KVS TGT","KVS PGT","Army GD","Territorial Army Exam",
+      "SSC Stenographer","SSC CPO","UP PET",
+    ];
+
+    const polySubjects = [
+      "Applied Physics-1",
+      "Applied Chemistry-1",
+      "Graphic",
+      "Workshop",
+      "Communication Skills"
+    ];
+
+    let historyStack = []; // 🔥 steps track karne ke liye
+
+    function enterSite() {
+      document.getElementById("welcome").style.display = "none";
+      document.getElementById("mainPage").style.display = "block";
+      loadExams();
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById("menuDropdown");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function shareSite() {
+      if (navigator.share) {
+        navigator.share({ title: "Exam Website", url: window.location.href });
+      } else { alert("Sharing not supported on this browser."); }
+    }
+
+    function exitSite() { window.open("about:blank", "_blank"); }
+    function aboutSite() { alert("📘 This site helps students prepare for exams in a simple and smart way!"); }
+
+    function loadExams() {
+      const examList = document.getElementById("examList");
+      examList.innerHTML = "";
+      exams.forEach((exam) => {
+        const div = document.createElement("div");
+        div.textContent = exam;
+        div.onclick = () => openExamDetail(exam);
+        examList.appendChild(div);
+      });
+    }
+
+    function openExamDetail(exam) {
+      historyStack = []; // reset jab naya exam select ho
+      historyStack.push("examList");
+
+      document.getElementById("examSection").style.display = "none";
+      document.getElementById("examDetail").style.display = "block";
+      document.getElementById("selectedExam").textContent = "📌 " + exam;
+
+      const detailContent = document.getElementById("detailContent");
+      detailContent.innerHTML = "";
+
+      if (exam === "UP Polytechnic First Year Exam Group A") {
+        historyStack.push("polyOptions");
+
+        const polyOptions = [
+          "📘 Unit Wise Mock Test",
+          "📖 Subject Wise Syllabus",
+          "📂 Previous Year Papers",
+          "🎯 Full Unit Mock Test"
+        ];
+        polyOptions.forEach((opt) => {
+          const div = document.createElement("div");
+          div.className = "option";
+          div.textContent = opt;
+          div.onclick = () => handlePolytechnicOption(opt);
+          detailContent.appendChild(div);
+        });
+      } else {
+        const options = [
+          "📘 Subject Wise Mock Test",
+          "📖 Syllabus",
+          "📝 Notes",
+          "📂 Previous Year Papers",
+          "🎯 Full Mock Test"
+        ];
+        options.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.textContent = opt;
+          btn.onclick = () => { alert(opt + " अभी उपलब्ध नहीं है।"); };
+          detailContent.appendChild(btn);
+        });
+      }
+    }
+
+    function handlePolytechnicOption(opt) {
+      const detailContent = document.getElementById("detailContent");
+      detailContent.innerHTML = "";
+
+      if (opt.includes("Subject Wise Syllabus") || opt.includes("Unit Wise Mock Test")) {
+        historyStack.push("subjectList");
+
+        polySubjects.forEach((sub) => {
+          const div = document.createElement("div");
+          div.className = "option";
+          div.textContent = sub;
+          div.onclick = () => alert(sub + " अभी उपलब्ध नहीं है।");
+          detailContent.appendChild(div);
+        });
+      } else {
+        alert(opt + " अभी उपलब्ध नहीं है।");
+      }
+    }
+
+    function backToExams() {
+      const lastStep = historyStack.pop(); // current step hatao
+      const prevStep = historyStack[historyStack.length - 1]; // pichla step dekho
+
+      const detailContent = document.getElementById("detailContent");
+      detailContent.innerHTML = "";
+
+      if (prevStep === "examList") {
+        document.getElementById("examDetail").style.display = "none";
+        document.getElementById("examSection").style.display = "block";
+      } 
+      else if (prevStep === "polyOptions") {
+        const polyOptions = [
+          "📘 Unit Wise Mock Test",
+          "📖 Subject Wise Syllabus",
+          "📂 Previous Year Papers",
+          "🎯 Full Unit Mock Test"
+        ];
+        polyOptions.forEach((opt) => {
+          const div = document.createElement("div");
+          div.className = "option";
+          div.textContent = opt;
+          div.onclick = () => handlePolytechnicOption(opt);
+          detailContent.appendChild(div);
+        });
+      }
+    }
+
+    document.getElementById("searchBox").addEventListener("keyup", function () {
+      const query = this.value.toLowerCase();
+      const examList = document.getElementById("examList");
+      examList.innerHTML = "";
+      exams.filter((exam) => exam.toLowerCase().includes(query))
+        .forEach((exam) => {
+          const div = document.createElement("div");
+          div.textContent = exam;
+          div.onclick = () => openExamDetail(exam);
+          examList.appendChild(div);
+        });
+    });
+  </script>
+</body>
+</html>
