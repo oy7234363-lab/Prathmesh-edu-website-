@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Polytechnic Exam Portal</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body, html {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      color: white;
+    }
+
+    /* 🌈 Animated Background */
+    .animated-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(270deg, #0072ff, #00c6ff, #ff0080, #7928ca);
+      background-size: 800% 800%;
+      animation: gradientFlow 18s ease infinite;
+      z-index: -2;
+    }
+
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* हल्की Wave Effect */
+    .wave {
+      position: fixed;
+      bottom: 0;
+      width: 200%;
+      height: 250px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 1000px;
+      animation: waveMove 14s infinite linear;
+      transform: translateX(-25%);
+      filter: blur(60px);
+      z-index: -1;
+    }
+
+    @keyframes waveMove {
+      from { transform: translateX(-25%) rotate(0deg); }
+      to { transform: translateX(-25%) rotate(360deg); }
+    }
+
+    #welcome {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      text-align: center;
+    }
+
+    #welcome h1 {
+      font-size: 2.4rem;
+      margin-bottom: 25px;
+      text-shadow: 0 0 25px #00e0ff;
+    }
+
+    #welcome button {
+      padding: 10px 25px;
+      font-size: 1.1rem;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: 0.3s;
+    }
+    #welcome button:hover { transform: scale(1.05); }
+
+    #mainPage {
+      display: none;
+      padding: 10px;
+      height: 100vh;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Menu Icon */
+    .menu-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 15;
+      background: rgba(0,0,0,0.4);
+      padding: 8px 12px;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+    .menu-icon:hover { background: rgba(0,0,0,0.6); }
+
+    /* Dropdown Menu नीचे से खुले */
+    .dropdown {
+      display: none;
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+      z-index: 14;
+      min-width: 160px;
+      transform: scale(0.8) translateY(20px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .dropdown.show {
+      display: block;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: white;
+      transition: 0.3s;
+    }
+
+    .dropdown a:hover {
+      background: #007bff;
+    }
+
+    #examSection {
+      margin-top: 60px;
+    }
+
+    #examSection h2 {
+      margin-bottom: 15px;
+      font-size: 1.6rem;
+      text-shadow: 0 0 15px #00e0ff;
+    }
+
+    #examList {
+      max-height: 280px;
+      overflow-y: auto;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      width: 85%;
+      margin: auto;
+      padding: 10px;
+    }
+
+    #examList div {
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #examList div:hover {
+      background: rgba(0,255,255,0.3);
+    }
+
+    #examDetail {
+      display: none;
+      background: rgba(0,0,0,0.55);
+      border-radius: 12px;
+      width: 85%;
+      margin: 30px auto;
+      padding: 15px;
+      backdrop-filter: blur(10px);
+    }
+
+    #examDetail h3 { color: #00e0ff; margin-bottom: 12px; }
+
+    .option {
+      display: block;
+      margin: 8px auto;
+      padding: 10px;
+      width: 80%;
+      max-width: 280px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .option:hover {
+      background: linear-gradient(135deg, #0056b3, #0096c7);
+      transform: scale(1.05);
+    }
+
+    .backBtn {
+      margin-top: 15px;
+      padding: 8px 18px;
+      background: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .backBtn:hover { background: #e64a19; transform: scale(1.05); }
+  </style>
+</head>
+<body>
+  <div class="animated-bg"></div>
+  <div class="wave"></div>
+
+  <div id="welcome">
+    <h1>Welcome Back 💙</h1>
+    <button onclick="enterSite()">🚀 Continue</button>
+  </div>
+
+  <div id="mainPage">
+    <div class="menu-icon" id="menuIcon">☰</div>
+    <div class="dropdown" id="menuDropdown">
+      <a href="#">🏠 Home</a>
+      <a href="#" onclick="shareSite()">🔗 Share</a>
+      <a href="#" onclick="exitSite()">❌ Exit</a>
+      <a href="#" onclick="aboutSite()">ℹ About</a>
+    </div>
+
+    <div id="examSection">
+      <h2>✨ Polytechnic Exam Section ✨</h2>
+      <div id="examList"></div>
+    </div>
+
+    <div id="examDetail">
+      <h3 id="selectedExam"></h3>
+      <div id="detailContent"></div>
+      <button class="backBtn" onclick="backToExams()">⬅ Back</button>
+    </div>
+  </div>
+
+  <script>
+    const exams = ["UP Polytechnic First Year Exam Group A"];
+    const polySubjects = [
+      "Applied Physics-1",
+      "Applied Chemistry-1",
+      "Engineering Graphics",
+      "Workshop Practice",
+      "Communication Skills"
+    ];
+
+    let currentView = "examList";
+
+    function enterSite() {
+      document.getElementById("welcome").style.display = "none";
+      document.getElementById("mainPage").style.display = "block";
+      loadExams();
+    }
+
+    const menuIcon = document.getElementById("menuIcon");
+    const menuDropdown = document.getElementById("menuDropdown");
+
+    function toggleMenu() {
+      const isVisible = menuDropdown.classList.contains("show");
+      if (isVisible) {
+        menuDropdown.classList.remove("show");
+        setTimeout(() => (menuDropdown.style.display = "none"), 300);
+      } else {
+        menuDropdown.style.display = "block";
+        setTimeout(() => menuDropdown.classList.add("show"), 10);
+      }
+    }
+
+    document.addEventListener("click", function (e) {
+      if (!menuDropdown.contains(e.target) && !menuIcon.contains(e.target)) {
+        menuDropdown.classList.remove("show");
+        setTimeout(() => (menuDropdown.style.display = "none"), 300);
+      }
+    });
+
+    menuIcon.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    function shareSite() {
+      if (navigator.share) {
+        navigator.share({ title: "Polytechnic Exam Portal", url: window.location.href });
+      } else {
+        alert("Sharing not supported on this browser.");
+      }
+    }
+
+    function exitSite() { window.close(); }
+    function aboutSite() { alert("📘 This site helps Polytechnic students prepare smartly!"); }
+
+    function loadExams() {
+      const examList = document.getElementById("examList");
+      examList.innerHTML = "";
+      exams.forEach(exam => {
+        const div = document.createElement("div");
+        div.textContent = exam;
+        div.onclick = () => openExamDetail(exam);
+        examList.appendChild(div);
+      });
+    }
+
+    function openExamDetail(exam) {
+      currentView = "examDetail";
+      document.getElementById("examSection").style.display = "none";
+      document.getElementById("examDetail").style.display = "block";
+      document.getElementById("selectedExam").textContent = "📌 " + exam;
+
+      const detailContent = document.getElementById("detailContent");
+      detailContent.innerHTML = "";
+
+      const polyOptions = [
+        "📘 Unit Wise Mock Test",
+        "📖 Subject Wise Syllabus",
+        "📂 Previous Year Papers",
+        "🎯 Full Unit Mock Test"
+      ];
+
+      polyOptions.forEach(opt => {
+        const div = document.createElement("div");
+        div.className = "option";
+        div.textContent = opt;
+        div.onclick = () => handlePolytechnicOption(opt);
+        detailContent.appendChild(div);
+      });
+    }
+
+    function handlePolytechnicOption(opt) {
+      currentView = "subjectList";
+      const detailContent = document.getElementById("detailContent");
+      detailContent.innerHTML = "";
+      polySubjects.forEach(sub => {
+        const div = document.createElement("div");
+        div.className = "option";
+        div.textContent = sub;
+        div.onclick = () => alert(sub + " अभी उपलब्ध नहीं है।");
+        detailContent.appendChild(div);
+      });
+    }
+
+    function backToExams() {
+      if (currentView === "subjectList") {
+        openExamDetail("UP Polytechnic First Year Exam Group A");
+        currentView = "examDetail";
+      } else if (currentView === "examDetail") {
+        document.getElementById("examDetail").style.display = "none";
+        document.getElementById("examSection").style.display = "block";
+        currentView = "examList";
+      }
+    }
+  </script>
+</body>
+</html>
